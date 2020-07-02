@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.qingmin.testProject</groupId>
+    <artifactId>sparkSQL-BQ-GS</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <name>sparkSQL-BQ-GS</name>
+    <!-- FIXME change it to the project's website -->
+    <url>http://www.example.com</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <scala.version>2.11</scala.version>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql_2.11</artifactId>
+            <version>2.4.5</version>
+            <!--<scope>provided</scope>-->   <!--For Dataproc-->
+            <scope>compile</scope>   <!--For Mac laptop K8s-->
+            <!--<scope>compile</scope>--> <!--For Local Testing-->
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.cloud.spark</groupId>
+            <artifactId>spark-bigquery-with-dependencies-assembly_${scala.version}</artifactId>
+            <version>0.16.1</version>
+        </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>org.apache.spark</groupId>-->
+            <!--<artifactId>spark-streaming_2.11</artifactId>-->
+            <!--<version>2.4.5</version>-->
+            <!--&lt;!&ndash;<scope>provided</scope>&ndash;&gt;   &lt;!&ndash;For Dataproc&ndash;&gt;-->
+            <!--<scope>compile</scope>   &lt;!&ndash;For Mac laptop K8s&ndash;&gt;-->
+            <!--&lt;!&ndash;<scope>compile</scope>&ndash;&gt;  &lt;!&ndash;For Local Testing&ndash;&gt;-->
+        <!--</dependency>-->
+
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-avro_2.11</artifactId>
+            <version>2.4.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.auth</groupId>
+            <artifactId>google-auth-library-appengine</artifactId>
+            <version>0.20.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.cloud.bigdataoss</groupId>
+            <artifactId>gcs-connector</artifactId>
+            <version>hadoop2-2.1.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>29.0-jre</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+
+        <plugins>
+            <!--<plugin>-->
+            <!--<groupId>org.apache.maven.plugins</groupId>-->
+            <!--<artifactId>maven-assembly-plugin</artifactId>-->
+            <!--<configuration>-->
+            <!--<archive>-->
+            <!--<manifest>-->
+            <!--<mainClass>com.qingmin.testProject.sparkStreammingExample</mainClass>-->
+            <!--</manifest>-->
+            <!--</archive>-->
+            <!--<descriptorRefs>-->
+            <!--<descriptorRef>jar-with-dependencies</descriptorRef>-->
+            <!--</descriptorRefs>-->
+            <!--</configuration>-->
+            <!--<executions>-->
+            <!--<execution>-->
+            <!--<id>assembly</id>-->
+            <!--<phase>package</phase>-->
+            <!--<goals>-->
+            <!--<goal>single</goal>-->
+            <!--</goals>-->
+            <!--</execution>-->
+            <!--</executions>-->
+            <!--</plugin>-->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <!--<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer">-->
+                                    <mainClass>com.qingmin.testProject.sparkSQLExample</mainClass>
+                                </transformer>
+                            </transformers>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/maven/**</exclude>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <relocations>
+                                <!--<relocation>-->
+                                <!--<pattern>com.google.common</pattern>-->
+                                <!--<shadedPattern>repackage.com.google.common</shadedPattern>-->
+                                <!--&lt;!&ndash;<excludes>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<exclude>org.codehaus.plexus.util.xml.Xpp3Dom</exclude>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<exclude>org.codehaus.plexus.util.xml.pull.*</exclude>&ndash;&gt;-->
+                                <!--&lt;!&ndash;</excludes>&ndash;&gt;-->
+                                <!--<includes>-->
+                                <!--<include>com.google.common.**</include>-->
+                                <!--</includes>-->
+                                <!--</relocation>-->
+                                <relocation>
+                                    <pattern>com.google</pattern>
+                                    <shadedPattern>repackage.com.google</shadedPattern>
+                                    <includes>
+                                        <include>com.google.**</include>
+                                    </includes>
+                                </relocation>
+                            </relocations>
+
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.scala-tools</groupId>
+                <artifactId>maven-scala-plugin</artifactId>
+                <version>2.15.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                        <configuration>
+                            <scalaVersion>2.11.12</scalaVersion>
+                            <!--<jvmArgs>-->
+                            <!--<jvmArg>-Xss4m</jvmArg>-->
+                            <!--<jvmArg>-Xms512m</jvmArg>-->
+                            <!--<jvmArg>-Xmx4096m</jvmArg>-->
+                            <!--</jvmArgs>-->
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--<plugin>-->
+            <!--<groupId>org.codehaus.mojo</groupId>-->
+            <!--<artifactId>exec-maven-plugin</artifactId>-->
+            <!--<version>1.6.0</version>-->
+            <!--<executions>-->
+            <!--<execution>-->
+            <!--<goals>-->
+            <!--<goal>java</goal>-->
+            <!--</goals>-->
+            <!--</execution>-->
+            <!--</executions>-->
+            <!--<configuration>-->
+            <!--<mainClass>com.qingmin.testProject.sparkStreammingExample</mainClass>-->
+            <!--</configuration>-->
+            <!--</plugin>-->
+        </plugins>
+
+    </build>
+</project>
