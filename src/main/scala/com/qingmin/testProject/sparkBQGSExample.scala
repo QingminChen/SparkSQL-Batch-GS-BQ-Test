@@ -33,32 +33,27 @@ object sparkSQLExample extends Logging {
     //spark.sparkContext.hadoopConfiguration.set("fs.gs.project.id", projectIDStr)
     //spark.conf.set("spark.project",projectIDStr)
     //spark.conf.set("credentialsFile",credentialsJsonFilePathStr)
+    //System.setProperty("GOOGLE_APPLICATION_CREDENTIALS",credentialsJsonFilePathStr)
      **/
 
     spark.sparkContext.hadoopConfiguration.set("google.cloud.auth.service.account.enable", "true")
     spark.sparkContext.hadoopConfiguration.set("google.cloud.auth.service.account.json.keyfile", credentialsJsonFilePathStr)
-//    spark.conf.set("credentialsFile",credentialsJsonFilePathStr)
-    //System.setProperty("GOOGLE_APPLICATION_CREDENTIALS",credentialsJsonFilePathStr)
-    //val df = spark.read.format("bigquery").option("dataset","BigQueryTestDataset").option("table","Users").load()
+    val df = spark.read.format("bigquery").option("dataset","BigQueryTestDataset").option("table","Users").load()
 
-    //val df = spark.read.format("bigquery").option("credentialsFile", credentialsJsonFilePathStr).option("dataset","BigQueryTestDataset").option("table","Users").load()
-    //val df = spark.read.format("avro").option("credentialsFile", credentialsJsonFilePathStr).load("gs://project-16951-bucket3-for-avro/users.avro")
-    val df = spark.read.format("avro").load("gs://project-16951-bucket3-for-avro/users.avro")
-//    df.printSchema()
-//    df.show(false)
+    //val df = spark.read.format("bigquery").option("credentialsFile", credentialsJsonFilePathStr).option("dataset","BigQueryTestDataset").option("table","Users").load()   //no used to set the option credentialsFile
+
+    //val df = spark.read.format("avro").load("gs://project-16951-bucket3-for-avro/users.avro")   //Read from GCS avro file
+
     df.createOrReplaceTempView("usersTempInMemory")
-    val usersFavoriteNumberDF = spark.sql(
-      "SELECT favorite_number FROM usersTempInMemory")
+    val usersFavoriteNumberDF = spark.sql("SELECT favorite_number FROM usersTempInMemory")
     usersFavoriteNumberDF.show()
     usersFavoriteNumberDF.printSchema()
     logInfo("12234325346")
 
-//    usersFavoriteNumberDF.write.format("avro").save("gs://project-16951-bucket4-write-avro/users_favorite_number.avro")   // write into GCS
-//
-//
-//    //usersFavoriteNumberDF.write.format("bigquery").option("credentialsFile", credentialsJsonFilePathStr).option("temporaryGcsBucket","project-16951-bucket5-write-bigquery").option("project",projectIDStr).option("dataset","BigQueryTestDataset").save("UsersFavoriteNumber")  // write into Bigquery
-//    //usersFavoriteNumberDF.write.format("bigquery").option("credentialsFile", credentialsJsonFilePathStr).option("project",projectIDStr).option("dataset","BigQueryTestDataset").save("UsersFavoriteNumber")  // write into Bigquery
-//    usersFavoriteNumberDF.write.format("bigquery").option("temporaryGcsBucket","project-16951-bucket5-write-bigquery").option("project",projectIDStr).option("dataset","BigQueryTestDataset").save("UsersFavoriteNumber")  // write into Bigquery
+    usersFavoriteNumberDF.write.format("avro").save("gs://project-16951-bucket4-write-avro/users_favorite_number.avro")   // write into GCS
+
+//    //usersFavoriteNumberDF.write.format("bigquery").option("credentialsFile", credentialsJsonFilePathStr).option("temporaryGcsBucket","project-16951-bucket5-write-bigquery").option("project",projectIDStr).option("dataset","BigQueryTestDataset").save("UsersFavoriteNumber")  // no use to set credentialsFile
+    usersFavoriteNumberDF.write.format("bigquery").option("temporaryGcsBucket","project-16951-bucket5-write-bigquery").option("project",projectIDStr).option("dataset","BigQueryTestDataset").save("UsersFavoriteNumber")  // write into Bigquery
 
   }
 
