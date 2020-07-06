@@ -30,10 +30,16 @@
             <!--<scope>compile</scope>--> <!--For Local Testing-->
         </dependency>
 
+<!--        <dependency>-->
+<!--            <groupId>com.google.cloud.spark</groupId>-->
+<!--            <artifactId>spark-bigquery-with-dependencies-assembly_${scala.version}</artifactId>-->
+<!--            <version>0.16.1</version>-->
+<!--        </dependency>-->
+
         <dependency>
             <groupId>com.google.cloud.spark</groupId>
-            <artifactId>spark-bigquery-with-dependencies-assembly_${scala.version}</artifactId>
-            <version>0.16.1</version>
+            <artifactId>spark-bigquery-with-dependencies_${scala.version}</artifactId>
+            <version>0.16.2</version>
         </dependency>
 
         <!--<dependency>-->
@@ -74,83 +80,83 @@
     <build>
 
         <plugins>
-            <!--<plugin>-->
-            <!--<groupId>org.apache.maven.plugins</groupId>-->
-            <!--<artifactId>maven-assembly-plugin</artifactId>-->
-            <!--<configuration>-->
-            <!--<archive>-->
-            <!--<manifest>-->
-            <!--<mainClass>com.qingmin.testProject.sparkStreammingExample</mainClass>-->
-            <!--</manifest>-->
-            <!--</archive>-->
-            <!--<descriptorRefs>-->
-            <!--<descriptorRef>jar-with-dependencies</descriptorRef>-->
-            <!--</descriptorRefs>-->
-            <!--</configuration>-->
-            <!--<executions>-->
-            <!--<execution>-->
-            <!--<id>assembly</id>-->
-            <!--<phase>package</phase>-->
-            <!--<goals>-->
-            <!--<goal>single</goal>-->
-            <!--</goals>-->
-            <!--</execution>-->
-            <!--</executions>-->
-            <!--</plugin>-->
-
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <!--<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer">-->
-                                    <mainClass>com.qingmin.testProject.sparkSQLExample</mainClass>
-                                </transformer>
-                            </transformers>
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/maven/**</exclude>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
-                                        <exclude>META-INF/*.RSA</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-                            <relocations>
-                                <!--<relocation>-->
-                                <!--<pattern>com.google.common</pattern>-->
-                                <!--<shadedPattern>repackage.com.google.common</shadedPattern>-->
-                                <!--&lt;!&ndash;<excludes>&ndash;&gt;-->
-                                <!--&lt;!&ndash;<exclude>org.codehaus.plexus.util.xml.Xpp3Dom</exclude>&ndash;&gt;-->
-                                <!--&lt;!&ndash;<exclude>org.codehaus.plexus.util.xml.pull.*</exclude>&ndash;&gt;-->
-                                <!--&lt;!&ndash;</excludes>&ndash;&gt;-->
-                                <!--<includes>-->
-                                <!--<include>com.google.common.**</include>-->
-                                <!--</includes>-->
-                                <!--</relocation>-->
-                                <relocation>
-                                    <pattern>com.google</pattern>
-                                    <shadedPattern>repackage.com.google</shadedPattern>
-                                    <includes>
-                                        <include>com.google.**</include>
-                                    </includes>
-                                </relocation>
-                            </relocations>
-
-                        </configuration>
-                    </execution>
-                </executions>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <configuration>
+            <archive>
+            <manifest>
+            <mainClass>com.qingmin.testProject.sparkSQLBQGSExample</mainClass>
+            </manifest>
+            </archive>
+            <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+            </descriptorRefs>
+            </configuration>
+            <executions>
+            <execution>
+            <id>assembly</id>
+            <phase>package</phase>
+            <goals>
+            <goal>single</goal>
+            </goals>
+            </execution>
+            </executions>
             </plugin>
+
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-shade-plugin</artifactId>-->
+<!--                <version>3.2.4</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>shade</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <transformers>-->
+<!--                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">-->
+<!--                                    &lt;!&ndash;<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer">&ndash;&gt;-->
+<!--                                    <mainClass>com.qingmin.testProject.sparkSQLBQGSExample</mainClass>-->
+<!--                                </transformer>-->
+<!--                            </transformers>-->
+<!--                            <filters>-->
+<!--                                <filter>-->
+<!--                                    <artifact>*:*</artifact>-->
+<!--                                    <excludes>-->
+<!--                                        <exclude>META-INF/maven/**</exclude>-->
+<!--                                        <exclude>META-INF/*.SF</exclude>-->
+<!--                                        <exclude>META-INF/*.DSA</exclude>-->
+<!--                                        <exclude>META-INF/*.RSA</exclude>-->
+<!--                                    </excludes>-->
+<!--                                </filter>-->
+<!--                            </filters>-->
+<!--                            <relocations>-->
+<!--                                &lt;!&ndash;<relocation>&ndash;&gt;-->
+<!--                                &lt;!&ndash;<pattern>com.google.common</pattern>&ndash;&gt;-->
+<!--                                &lt;!&ndash;<shadedPattern>repackage.com.google.common</shadedPattern>&ndash;&gt;-->
+<!--                                &lt;!&ndash;&lt;!&ndash;<excludes>&ndash;&gt;&ndash;&gt;-->
+<!--                                &lt;!&ndash;&lt;!&ndash;<exclude>org.codehaus.plexus.util.xml.Xpp3Dom</exclude>&ndash;&gt;&ndash;&gt;-->
+<!--                                &lt;!&ndash;&lt;!&ndash;<exclude>org.codehaus.plexus.util.xml.pull.*</exclude>&ndash;&gt;&ndash;&gt;-->
+<!--                                &lt;!&ndash;&lt;!&ndash;</excludes>&ndash;&gt;&ndash;&gt;-->
+<!--                                &lt;!&ndash;<includes>&ndash;&gt;-->
+<!--                                &lt;!&ndash;<include>com.google.common.**</include>&ndash;&gt;-->
+<!--                                &lt;!&ndash;</includes>&ndash;&gt;-->
+<!--                                &lt;!&ndash;</relocation>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <relocation>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <pattern>com.google</pattern>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <shadedPattern>repackage.com.google</shadedPattern>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <includes>&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <include>com.google.**</include>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </includes>&ndash;&gt;-->
+<!--&lt;!&ndash;                                </relocation>&ndash;&gt;-->
+<!--                            </relocations>-->
+
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
 
             <plugin>
                 <groupId>org.scala-tools</groupId>
