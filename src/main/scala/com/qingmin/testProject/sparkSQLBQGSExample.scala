@@ -3,6 +3,7 @@ package com.qingmin.testProject
 import org.apache.spark.internal.Logging
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.avro._
+//import com.google.cloud.spark.bigquery._   it didn't work
 
 
 object sparkSQLBQGSExample extends Logging {
@@ -14,11 +15,14 @@ object sparkSQLBQGSExample extends Logging {
     val projectIDStr = "pubsub-test-project-16951"
     System.setProperty("GOOGLE_CLOUD_PROJECT",projectIDStr)
 
+    logInfo("Qingmin*******************************Json file path: "+sparkSQLBQGSExample.getClass.getClassLoader.getResource("AllServicesKey.json").getPath) // you can check the log via dataproc cluster logviewer
 
-    val credentialsJsonFilePathStr = "/Users/chenqingmin/Codes/IntelliJ_IDEA_Workspace/Spark-Batch-GS-BQ-Test/src/main/resources/AllServicesKey.json"
-    //val credentialsJsonFilePathStr = "/home/testinggcpuser/AllServicesKey.json"
-    //val spark = SparkSession.builder.getOrCreate()
-    val spark = SparkSession.builder.master("local[4]").getOrCreate()
+    //val credentialsJsonFilePathStr = "/Users/chenqingmin/Codes/IntelliJ_IDEA_Workspace/Spark-Batch-GS-BQ-Test/src/main/resources/AllServicesKey.json" //Mac local laptop can work
+    val credentialsJsonFilePathStr = "/home/testinggcpuser/AllServicesKey.json"   //Dataproc cluster can work
+    //val credentialsJsonFilePathStr = sparkSQLBQGSExample.getClass.getClassLoader.getResource("AllServicesKey.json").getPath // The cluster has no resources to proceed it, didn't test, guess won't be working
+    //val credentialsJsonFilePathStr = "gs://sparksql_bq_gcs_batch_test/AllServicesKey.json"
+    val spark = SparkSession.builder.getOrCreate()  //Dataproc cluster can work
+    //val spark = SparkSession.builder.master("local[4]").getOrCreate() //Mac local laptop can work
 
     /** the following the code block ,all of them didn't work, especially someone mentioned you can pass the hadoop related properties into spark by add prefix
      *  spark.hadoop.xxxxx   it didn't work
@@ -52,7 +56,7 @@ object sparkSQLBQGSExample extends Logging {
     spark.sparkContext.hadoopConfiguration.set("google.cloud.auth.service.account.enable", "true")
     spark.sparkContext.hadoopConfiguration.set("google.cloud.auth.service.account.json.keyfile", credentialsJsonFilePathStr)
 
-    val df = spark.read.format("bigquery").option("project",projectIDStr).option("dataset","BigQueryTestDataset").option("table","Users").load()
+    val df = spark.read.format("com.google.cloud.spark.bigquery").option("project",projectIDStr).option("dataset","BigQueryTestDataset").option("table","Users").load()
 
     //val df = spark.read.format("avro").load("gs://project-16951-bucket3-for-avro/users.avro")   //Read from GCS avro file
     df.createOrReplaceTempView("usersTempInMemory")
@@ -62,7 +66,7 @@ object sparkSQLBQGSExample extends Logging {
     logInfo("12234325346")
 
     usersFavoriteNumberDF.write.format("avro").save("gs://project-16951-bucket4-write-avro/users_favorite_number.avro")   // write into GCS
-    usersFavoriteNumberDF.write.format("bigquery").option("temporaryGcsBucket","project-16951-bucket5-write-bigquery").option("project",projectIDStr).option("dataset","BigQueryTestDataset").save("UsersFavoriteNumber")  // write into Bigquery
+    usersFavoriteNumberDF.write.format("com.google.cloud.spark.bigquery").option("temporaryGcsBucket","project-16951-bucket5-write-bigquery").option("project",projectIDStr).option("dataset","BigQueryTestDataset").save("UsersFavoriteNumber")  // write into Bigquery
 
   }
 

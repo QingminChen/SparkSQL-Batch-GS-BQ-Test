@@ -36,11 +36,17 @@
 <!--            <version>0.16.1</version>-->
 <!--        </dependency>-->
 
-        <dependency>
+        <dependency>         <!--Only this package pakaged by myself can work-->
             <groupId>com.google.cloud.spark</groupId>
             <artifactId>spark-bigquery-with-dependencies_${scala.version}</artifactId>
             <version>0.16.2</version>
         </dependency>
+
+<!--	    <dependency>-->   <!--This official released package has compatible issue, it couldn't work for me-->
+<!--            <groupId>com.google.cloud.spark</groupId>-->
+<!--            <artifactId>spark-bigquery_2.11</artifactId>-->
+<!--            <version>0.16.1</version>-->
+<!--	    </dependency>-->
 
         <!--<dependency>-->
             <!--<groupId>org.apache.spark</groupId>-->
