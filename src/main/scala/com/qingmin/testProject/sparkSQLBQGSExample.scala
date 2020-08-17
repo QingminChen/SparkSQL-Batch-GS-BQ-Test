@@ -18,9 +18,10 @@ object sparkSQLBQGSExample extends Logging {
     logInfo("Qingmin*******************************Json file path: "+sparkSQLBQGSExample.getClass.getClassLoader.getResource("AllServicesKey.json").getPath) // you can check the log via dataproc cluster logviewer
 
     //val credentialsJsonFilePathStr = "/Users/chenqingmin/Codes/IntelliJ_IDEA_Workspace/Spark-Batch-GS-BQ-Test/src/main/resources/AllServicesKey.json" //Mac local laptop can work
-    val credentialsJsonFilePathStr = "/home/testinggcpuser/AllServicesKey.json"   //Dataproc cluster can work
+    //val credentialsJsonFilePathStr = "/home/testinggcpuser/AllServicesKey.json"   //Dataproc cluster can work
+    val credentialsJsonFilePathStr = "/testproject/security/AllServicesKey.json"
     //val credentialsJsonFilePathStr = sparkSQLBQGSExample.getClass.getClassLoader.getResource("AllServicesKey.json").getPath // The cluster has no resources to proceed it, didn't test, guess won't be working
-    //val credentialsJsonFilePathStr = "gs://sparksql_bq_gcs_batch_test/AllServicesKey.json"
+    //val credentialsJsonFilePathStr = "gs://sparksql_bq_gcs_batch_test/AllServicesKey.json"  // not supported
     val spark = SparkSession.builder.getOrCreate()  //Dataproc cluster can work
     //val spark = SparkSession.builder.master("local[4]").getOrCreate() //Mac local laptop can work
 
@@ -44,17 +45,20 @@ object sparkSQLBQGSExample extends Logging {
      * //spark.sparkContext.hadoopConfiguration.set("fs.gs.project.id", projectIDStr)
      * //spark.conf.set("spark.project",projectIDStr)
      * //spark.conf.set("credentialsFile",credentialsJsonFilePathStr)
-     * //spark.sparkContext.hadoopConfiguration.set("fs.AbstractFileSystem.gs.impl", "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFS")
-     * //spark.sparkContext.hadoopConfiguration.set("fs.gs.impl","com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem")
-     * //spark.sparkContext.hadoopConfiguration.set("fs.gs.auth.service.account.enable", "true")
-     * //spark.sparkContext.hadoopConfiguration.set("fs.gs.auth.service.account.json.keyfile", credentialsJsonFilePathStr)
+
      * //val df = spark.read.format("bigquery").option("credentialsFile", credentialsJsonFilePathStr).option("dataset","BigQueryTestDataset").option("table","Users").load()   //no used to set the option credentialsFile
      * usersFavoriteNumberDF.write.format("bigquery").option("credentialsFile", credentialsJsonFilePathStr).option("temporaryGcsBucket", "project-16951-bucket5-write-bigquery").option("project", projectIDStr).option("dataset", "BigQueryTestDataset").save("UsersFavoriteNumber") // no use to set credentialsFile
      *
      **/
-
+     /**Local linux file system works*/
     spark.sparkContext.hadoopConfiguration.set("google.cloud.auth.service.account.enable", "true")
     spark.sparkContext.hadoopConfiguration.set("google.cloud.auth.service.account.json.keyfile", credentialsJsonFilePathStr)
+
+
+//    spark.sparkContext.hadoopConfiguration.set("fs.AbstractFileSystem.gs.impl", "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFS")  // it is not supported in bigquery connector
+//    spark.sparkContext.hadoopConfiguration.set("fs.gs.impl","com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem")  // it is not supported in bigquery connector
+//    spark.sparkContext.hadoopConfiguration.set("fs.gs.auth.service.account.enable", "true")   // it is not supported in bigquery connector
+//    spark.sparkContext.hadoopConfiguration.set("fs.gs.auth.service.account.json.keyfile", credentialsJsonFilePathStr)   // it is not supported in bigquery connector
 
     val df = spark.read.format("com.google.cloud.spark.bigquery").option("project",projectIDStr).option("dataset","BigQueryTestDataset").option("table","Users").load()
 
